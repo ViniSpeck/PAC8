@@ -1,5 +1,10 @@
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
 class MergeSort:
-    def sort(self, arr):
+    @staticmethod
+    def sort(arr):
         if len(arr) > 1:
             # Divide the array into two halves
             mid = len(arr) // 2
@@ -7,8 +12,8 @@ class MergeSort:
             right = arr[mid:]
 
             # Recursively sort the two halves
-            self.sort(left)
-            self.sort(right)
+            MergeSort.sort(left)
+            MergeSort.sort(right)
 
             # Merge the sorted halves
             i = j = k = 0
@@ -34,7 +39,13 @@ class MergeSort:
 
         return arr
 
-arr = [64, 34, 25, 12, 22, 11, 90]
-ms = MergeSort()
-sorted_arr = ms.sort(arr)
-print(sorted_arr)
+@app.route('/sort', methods=['POST'])
+def sort():
+    data = request.json
+    unsorted_arr = data['arr']
+    ms = MergeSort()
+    sorted_arr = ms.sort(unsorted_arr)
+    return jsonify({'sorted_arr': sorted_arr})
+
+if __name__ == '__main__':
+    app.run(debug=True)
